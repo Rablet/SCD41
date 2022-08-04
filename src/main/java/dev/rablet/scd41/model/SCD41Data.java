@@ -1,7 +1,7 @@
 package dev.rablet.scd41.model;
 
 /**
- * Stores the temperature, humidity, and pressure information retrieved from a
+ * Stores the temperature, humidity, and co2 information retrieved from a
  * SCD41 sensor
  */
 public class SCD41Data {
@@ -22,26 +22,56 @@ public class SCD41Data {
         this.co2 = co2;
     }
 
+    /**
+     * Gets the temperature in Celsius
+     * 
+     * @return double the temperature
+     */
     public double getTemperature() {
         return this.temperature;
     }
 
+    /**
+     * Set the temperature in Celsius
+     * 
+     * @param temperature the temperature in Celsius
+     */
     public void setTemperature(double temperature) {
         this.temperature = temperature;
     }
 
+    /**
+     * Get the relative humidity
+     * 
+     * @return double the relative humidity
+     */
     public double getHumidity() {
         return this.humidity;
     }
 
+    /**
+     * Set the relative humidity
+     * 
+     * @param humidity the humidity to set
+     */
     public void setHumidity(double humidity) {
         this.humidity = humidity;
     }
 
+    /**
+     * Get the CO2 measurement
+     * 
+     * @return int the CO2
+     */
     public int getCo2() {
         return this.co2;
     }
 
+    /**
+     * Set the CO2 measurement
+     * 
+     * @param co2 the CO2 to set
+     */
     public void setCo2(int co2) {
         this.co2 = co2;
     }

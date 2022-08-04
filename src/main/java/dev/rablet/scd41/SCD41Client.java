@@ -13,6 +13,9 @@ import java.io.IOException;
 import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Client used to read data from an SCD41 sensor.
+ */
 public class SCD41Client {
 
     private final static org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(SCD41Client.class);
@@ -149,7 +152,9 @@ public class SCD41Client {
      * reads.
      * NOTE: This appears to give inaccurate reads - use with caution
      * 
-     * @param ioSCD41 the I2C device to use
+     * @return SCD41Data the data read from the sensor
+     * 
+     * @throws IOException if the sensor could not be read
      */
     public SCD41Data oneOffRead() throws IOException {
         try (I2C ioSCD41 = i2CProvider.create(i2cConfig)) {
