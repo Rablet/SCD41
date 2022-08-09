@@ -23,12 +23,14 @@ public class SCD41Client {
     /*
      * Sensor Commands
      */
-    private final int CMD_GET_SERIAL = 0x3682;
-    private final int CMD_ONE_OFF_READING = 0x219d;
-    private final int CMD_READ_DATA = 0xEC05;
-    private final int CMD_START_PERIODIC_MEASUREMENT = 0x21B1;
-    private final int CMD_STOP_PERIODIC_MEASUREMENT = 0x3F86;
-    private final int CMD_DATA_READY = 0xE4B8;
+    /*
+     * private final int CMD_GET_SERIAL = 0x3682;
+     * private final int CMD_ONE_OFF_READING = 0x219d;
+     * private final int CMD_READ_DATA = 0xEC05;
+     * private final int CMD_START_PERIODIC_MEASUREMENT = 0x21B1;
+     * private final int CMD_STOP_PERIODIC_MEASUREMENT = 0x3F86;
+     * private final int CMD_DATA_READY = 0xE4B8;
+     */
 
     private I2CProvider i2CProvider;
     private I2CConfig i2cConfig;
@@ -62,7 +64,7 @@ public class SCD41Client {
             throws IllegalArgumentException {
         Context pi4j = Pi4J.newAutoContext();
         try {
-            this.i2CProvider = pi4j.provider("linuxfs-i2c");
+            this.i2CProvider = pi4j.provider(provider);
         } catch (ProviderNotFoundException e) {
             throw new IllegalArgumentException(e);
         }
@@ -81,7 +83,7 @@ public class SCD41Client {
         try (I2C ioSCD41 = i2CProvider.create(i2cConfig)) {
             LOG.info("Getting SCD41 serial");
             stopPeriodicReads(ioSCD41);
-            sendCommand(ioSCD41, CMD_GET_SERIAL);
+            sendCommand(ioSCD41, SCD41Commands.CMD_GET_SERIAL.getValue());
             byte[] response = new byte[9];
             try {
                 TimeUnit.SECONDS.sleep(1);
@@ -113,7 +115,7 @@ public class SCD41Client {
      */
     public SCD41Data getSCD41Data() throws IOException {
         try (I2C ioSCD41 = i2CProvider.create(i2cConfig)) {
-            LOG.trace("I2C Bus: {}, Device: {}", i2cBus, i2cDevice);
+            LOG.debug("I2C Bus: {}, Device: {}", i2cBus, i2cDevice);
             LOG.debug("Stopping any existing periodic reads");
             stopPeriodicReads(ioSCD41);
             LOG.debug("Starting periodic reads");
@@ -160,7 +162,7 @@ public class SCD41Client {
         try (I2C ioSCD41 = i2CProvider.create(i2cConfig)) {
 
             stopPeriodicReads(ioSCD41);
-            sendCommand(ioSCD41, CMD_ONE_OFF_READING);
+            sendCommand(ioSCD41, SCD41Commands.CMD_ONE_OFF_READING.getValue());
             try {
                 TimeUnit.SECONDS.sleep(5);
             } catch (InterruptedException e) {
@@ -180,7 +182,7 @@ public class SCD41Client {
      * @param ioSCD41 the I2C device to use
      */
     private void stopPeriodicReads(I2C ioSCD41) {
-        sendCommand(ioSCD41, CMD_STOP_PERIODIC_MEASUREMENT);
+        sendCommand(ioSCD41, SCD41Commands.CMD_STOP_PERIODIC_MEASUREMENT.getValue());
         try {
             TimeUnit.MILLISECONDS.sleep(500);
         } catch (InterruptedException e) {
@@ -194,7 +196,7 @@ public class SCD41Client {
      * @param ioSCD41 the I2C device to use
      */
     private void startPeriodicReads(I2C ioSCD41) {
-        sendCommand(ioSCD41, CMD_START_PERIODIC_MEASUREMENT);
+        sendCommand(ioSCD41, SCD41Commands.CMD_START_PERIODIC_MEASUREMENT.getValue());
         // No sleep needed after this command per data sheet
     }
 
@@ -208,7 +210,7 @@ public class SCD41Client {
     private void waitUntilDataIsAvailable(I2C ioSCD41) {
         int dataReady = 0;
         while (dataReady == 0) {
-            sendCommand(ioSCD41, CMD_DATA_READY);
+            sendCommand(ioSCD41, SCD41Commands.CMD_DATA_READY.getValue());
             byte[] response = new byte[3];
             ioSCD41.read(response, 3);
 
@@ -235,7 +237,7 @@ public class SCD41Client {
      * @return
      */
     private byte[] readData(I2C tca9534Dev) {
-        sendCommand(tca9534Dev, CMD_READ_DATA);
+        sendCommand(tca9534Dev, SCD41Commands.CMD_READ_DATA.getValue());
         byte[] measurementResponse = new byte[9];
 
         tca9534Dev.read(measurementResponse, 9);
@@ -257,8 +259,6 @@ public class SCD41Client {
 
         int hum = ((measurementResponse[6] & 0xff) << 8) | (measurementResponse[7] & 0xff);
         double hum2 = 100 * (hum / (Math.pow(2, 16) - 1));
-
-        LOG.debug("CO2 = {}. Temp = {}. Humidity = {}", co2, temp2, hum2);
 
         SCD41Data scd41Data = new SCD41Data(temp2, hum2, co2);
 
