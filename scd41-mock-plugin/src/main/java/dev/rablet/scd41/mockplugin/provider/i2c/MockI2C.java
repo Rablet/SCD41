@@ -91,49 +91,41 @@ public class MockI2C extends I2CBase implements I2C {
 
     @Override
     public int write(byte b) {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
     public int write(byte[] data, int offset, int length) {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
     public int read() {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
     public int read(byte[] buffer, int offset, int length) {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
     public int readRegister(int register) {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
     public int readRegister(int register, byte[] buffer, int offset, int length) {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
     public int writeRegister(int register, byte b) {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
     public int writeRegister(int register, byte[] data, int offset, int length) {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new UnsupportedOperationException("Not implemented");
     }
 }

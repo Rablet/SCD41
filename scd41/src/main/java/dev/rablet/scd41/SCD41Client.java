@@ -20,18 +20,6 @@ public class SCD41Client {
 
     private final static org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(SCD41Client.class);
 
-    /*
-     * Sensor Commands
-     */
-    /*
-     * private final int CMD_GET_SERIAL = 0x3682;
-     * private final int CMD_ONE_OFF_READING = 0x219d;
-     * private final int CMD_READ_DATA = 0xEC05;
-     * private final int CMD_START_PERIODIC_MEASUREMENT = 0x21B1;
-     * private final int CMD_STOP_PERIODIC_MEASUREMENT = 0x3F86;
-     * private final int CMD_DATA_READY = 0xE4B8;
-     */
-
     private I2CProvider i2CProvider;
     private I2CConfig i2cConfig;
 
@@ -80,17 +68,17 @@ public class SCD41Client {
      * @throws IOException if the serial could not be retrieved
      */
     public String getSerial() throws IOException {
-        try (I2C ioSCD41 = i2CProvider.create(i2cConfig)) {
-            LOG.info("Getting SCD41 serial");
-            stopPeriodicReads(ioSCD41);
-            sendCommand(ioSCD41, SCD41Commands.CMD_GET_SERIAL.getValue());
+        try (I2C scd41Device = i2CProvider.create(i2cConfig)) {
+            LOG.debug("Getting SCD41 serial");
+            stopPeriodicReads(scd41Device);
+            sendCommand(scd41Device, SCD41Commands.CMD_GET_SERIAL.getValue());
             byte[] response = new byte[9];
             try {
                 TimeUnit.SECONDS.sleep(1);
             } catch (InterruptedException e) {
                 LOG.warn("Could not sleep", e);
             }
-            ioSCD41.read(response, 9);
+            scd41Device.read(response, 9);
 
             StringJoiner sj = new StringJoiner(" ");
 
@@ -114,18 +102,18 @@ public class SCD41Client {
      * @throws IOException if reading from the sensor failed
      */
     public SCD41Data getSCD41Data() throws IOException {
-        try (I2C ioSCD41 = i2CProvider.create(i2cConfig)) {
+        try (I2C scd41Device = i2CProvider.create(i2cConfig)) {
             LOG.debug("I2C Bus: {}, Device: {}", i2cBus, i2cDevice);
             LOG.debug("Stopping any existing periodic reads");
-            stopPeriodicReads(ioSCD41);
+            stopPeriodicReads(scd41Device);
             LOG.debug("Starting periodic reads");
-            startPeriodicReads(ioSCD41);
+            startPeriodicReads(scd41Device);
             LOG.debug("Waiting for data to be available");
-            waitUntilDataIsAvailable(ioSCD41);
+            waitUntilDataIsAvailable(scd41Device);
             LOG.debug("Data available. Reading from sensor");
-            byte[] rawSensorData = readData(ioSCD41);
+            byte[] rawSensorData = readData(scd41Device);
             LOG.debug("Stopping periodic reads");
-            stopPeriodicReads(ioSCD41);
+            stopPeriodicReads(scd41Device);
             LOG.debug("Parsing data");
             SCD41Data scd41Data = parseReadingResponse(rawSensorData);
             LOG.debug("Data == {}", scd41Data);
@@ -138,15 +126,15 @@ public class SCD41Client {
     /**
      * Sends a command to the I2C device
      * 
-     * @param ioSCD41 the I2C device to send the command to
+     * @param scd41Device the I2C device to send the command to
      * @param command the command to send
      */
-    private void sendCommand(I2C ioSCD41, int command) {
+    private void sendCommand(I2C scd41Device, int command) {
         byte[] cmd = new byte[2];
         cmd[0] = (byte) ((command >> 8) & 0xFF);
         cmd[1] = (byte) (command & 0xFF);
         LOG.trace("Sending command {} {}", String.format("%02X ", cmd[0]), String.format("%02X ", cmd[1]));
-        ioSCD41.write(cmd);
+        scd41Device.write(cmd);
     }
 
     /**
@@ -159,17 +147,17 @@ public class SCD41Client {
      * @throws IOException if the sensor could not be read
      */
     public SCD41Data oneOffRead() throws IOException {
-        try (I2C ioSCD41 = i2CProvider.create(i2cConfig)) {
+        try (I2C scd41Device = i2CProvider.create(i2cConfig)) {
 
-            stopPeriodicReads(ioSCD41);
-            sendCommand(ioSCD41, SCD41Commands.CMD_ONE_OFF_READING.getValue());
+            stopPeriodicReads(scd41Device);
+            sendCommand(scd41Device, SCD41Commands.CMD_ONE_OFF_READING.getValue());
             try {
                 TimeUnit.SECONDS.sleep(5);
             } catch (InterruptedException e) {
                 LOG.warn("Could not sleep", e);
             }
             byte[] measurementResponse = new byte[9];
-            ioSCD41.read(measurementResponse, 9);
+            scd41Device.read(measurementResponse, 9);
             return parseReadingResponse(measurementResponse);
         } catch (Exception e) {
             throw new IOException("Could not read SCD41 sensor data", e);
@@ -179,10 +167,10 @@ public class SCD41Client {
     /**
      * Stops periodic measurements
      * 
-     * @param ioSCD41 the I2C device to use
+     * @param scd41Device the I2C device to use
      */
-    private void stopPeriodicReads(I2C ioSCD41) {
-        sendCommand(ioSCD41, SCD41Commands.CMD_STOP_PERIODIC_MEASUREMENT.getValue());
+    private void stopPeriodicReads(I2C scd41Device) {
+        sendCommand(scd41Device, SCD41Commands.CMD_STOP_PERIODIC_MEASUREMENT.getValue());
         try {
             TimeUnit.MILLISECONDS.sleep(500);
         } catch (InterruptedException e) {
@@ -193,10 +181,10 @@ public class SCD41Client {
     /**
      * Starts periodic reads
      * 
-     * @param ioSCD41 the I2C device to use
+     * @param scd41Device the I2C device to use
      */
-    private void startPeriodicReads(I2C ioSCD41) {
-        sendCommand(ioSCD41, SCD41Commands.CMD_START_PERIODIC_MEASUREMENT.getValue());
+    private void startPeriodicReads(I2C scd41Device) {
+        sendCommand(scd41Device, SCD41Commands.CMD_START_PERIODIC_MEASUREMENT.getValue());
         // No sleep needed after this command per data sheet
     }
 
@@ -205,14 +193,14 @@ public class SCD41Client {
      * available.
      * Returns once a response is available.
      * 
-     * @param ioSCD41
+     * @param scd41Device
      */
-    private void waitUntilDataIsAvailable(I2C ioSCD41) {
+    private void waitUntilDataIsAvailable(I2C scd41Device) {
         int dataReady = 0;
         while (dataReady == 0) {
-            sendCommand(ioSCD41, SCD41Commands.CMD_DATA_READY.getValue());
+            sendCommand(scd41Device, SCD41Commands.CMD_DATA_READY.getValue());
             byte[] response = new byte[3];
-            ioSCD41.read(response, 3);
+            scd41Device.read(response, 3);
 
             LOG.trace(
                     "Data Ready Response = {} {}", String.format("%02X ", response[0]),
@@ -233,14 +221,14 @@ public class SCD41Client {
     /**
      * Reads data from the sensor
      * 
-     * @param tca9534Dev
+     * @param scd41Device
      * @return
      */
-    private byte[] readData(I2C tca9534Dev) {
-        sendCommand(tca9534Dev, SCD41Commands.CMD_READ_DATA.getValue());
+    private byte[] readData(I2C scd41Device) {
+        sendCommand(scd41Device, SCD41Commands.CMD_READ_DATA.getValue());
         byte[] measurementResponse = new byte[9];
 
-        tca9534Dev.read(measurementResponse, 9);
+        scd41Device.read(measurementResponse, 9);
         return measurementResponse;
     }
 

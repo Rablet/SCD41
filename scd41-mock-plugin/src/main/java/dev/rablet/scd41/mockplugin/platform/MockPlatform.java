@@ -18,15 +18,12 @@ public class MockPlatform extends PlatformBase<MockPlatform> implements Platform
     /** {@inheritDoc} */
     @Override
     public int priority() {
-        return 10;
+        return -1;
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean enabled(Context context) {
-        // the Mock Platform is always available when detected
-        // there are no logic checked required to determine when
-        // and if the mock platforms should be enabled
         return true;
     }
 

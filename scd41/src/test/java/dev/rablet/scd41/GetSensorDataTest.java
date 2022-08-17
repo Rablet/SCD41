@@ -25,14 +25,14 @@ public class GetSensorDataTest {
     private static final Logger logger = LoggerFactory.getLogger(GetSensorDataTest.class);
 
     @Test
-    public void test() throws IOException {
-
-        SCD41Client scd41Client = new SCD41Client("MockI2CProviderId", "MOCKBME280", 1, 0x12);
+    public void testGetSCD41Data() throws IOException {
+        // Uses the mockprovider which is set to return
+        // the example data from the SCD41 data sheet here (section 3.5.2):
+        // https://sensirion.com/media/documents/C4B87CE6/627C2DCD/CD_DS_SCD40_SCD41_Datasheet_D1.pdf
+        // This is run through the parsing functionality to ensure we end up with the correct values
+        SCD41Client scd41Client = new SCD41Client("scd41mockplugin-i2c", "MOCKBME280", 1, 0x12);
 
         SCD41Data data = scd41Client.getSCD41Data();
-
-        logger.info("Data = {}", data);
-
 
         assertEquals(data.getCo2(), 500);
         assertEquals(data.getTemperature(), 25, 0.01);
