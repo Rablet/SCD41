@@ -9,7 +9,9 @@ import com.pi4j.io.i2c.I2CProviderBase;
  */
 public class MockI2CProviderImpl extends I2CProviderBase implements MockI2CProvider {
 
-    /** {@inheritDoc} */
+    /**
+     * Create an instance of this provider
+     */
     public MockI2CProviderImpl() {
         this.id = ID;
         this.name = NAME;

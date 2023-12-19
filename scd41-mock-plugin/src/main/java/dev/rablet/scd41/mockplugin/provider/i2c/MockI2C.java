@@ -1,6 +1,5 @@
 package dev.rablet.scd41.mockplugin.provider.i2c;
 
-import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CBase;
 import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.io.i2c.I2CProvider;
@@ -16,9 +15,14 @@ import java.util.Arrays;
  * - Have to check if data is ready before reading sensor
  * - Returns the exact sensor data used as an example in the spec sheet
  */
-public class MockI2C extends I2CBase implements I2C {
+public class MockI2C extends I2CBase {
 
-    /** {@inheritDoc} */
+    /**
+     * Create an instance of this MockI2C class
+     * 
+     * @param provider the provider
+     * @param config   the config
+     */
     public MockI2C(I2CProvider provider, I2CConfig config) {
         super(provider, config);
     }
@@ -112,41 +116,52 @@ public class MockI2C extends I2CBase implements I2C {
 
     @Override
     public int write(byte b) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Unimplemented method 'write'");
     }
 
     @Override
     public int write(byte[] data, int offset, int length) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Unimplemented method 'write'");
     }
 
     @Override
     public int read() {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Unimplemented method 'read'");
     }
 
     @Override
     public int read(byte[] buffer, int offset, int length) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Unimplemented method 'read'");
     }
 
     @Override
     public int readRegister(int register) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Unimplemented method 'readRegister'");
+    }
+
+    @Override
+    public int readRegister(byte[] register, byte[] buffer, int offset, int length) {
+        throw new UnsupportedOperationException("Unimplemented method 'readRegister'");
     }
 
     @Override
     public int readRegister(int register, byte[] buffer, int offset, int length) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Unimplemented method 'readRegister'");
     }
 
     @Override
     public int writeRegister(int register, byte b) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Unimplemented method 'writeRegister'");
     }
 
     @Override
     public int writeRegister(int register, byte[] data, int offset, int length) {
-        throw new UnsupportedOperationException("Not implemented");
+        throw new UnsupportedOperationException("Unimplemented method 'writeRegister'");
     }
+
+    @Override
+    public int writeRegister(byte[] register, byte[] data, int offset, int length) {
+        throw new UnsupportedOperationException("Unimplemented method 'writeRegister'");
+    }
+
 }

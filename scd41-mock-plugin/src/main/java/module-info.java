@@ -2,7 +2,7 @@
  * Module for the mock Pi4j2 plugin used to test an SCD41 sensor
  */
 module dev.rablet.scd41.mockplugin {
-    requires com.pi4j;
+    requires transitive com.pi4j;
 
     uses com.pi4j.extension.Plugin;
 

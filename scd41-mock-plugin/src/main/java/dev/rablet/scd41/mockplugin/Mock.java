@@ -5,6 +5,10 @@ package dev.rablet.scd41.mockplugin;
  */
 public class Mock {
 
+    private Mock() {
+
+    }
+
     /**
      * The name of the plugin
      */

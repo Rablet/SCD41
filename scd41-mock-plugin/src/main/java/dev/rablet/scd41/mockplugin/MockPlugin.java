@@ -13,9 +13,16 @@ import dev.rablet.scd41.mockplugin.provider.i2c.MockI2CProvider;
 public class MockPlugin implements Plugin {
 
     /**
+     * This is only created to avoid javadoc warnings
+     */
+    public MockPlugin() {
+        super();
+    }
+
+    /**
      * The providers supported by this plugin. Only I2C
      */
-    private Provider providers[] = {
+    private Provider[] providers = {
             MockI2CProvider.newInstance(),
     };
 
