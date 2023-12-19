@@ -4,8 +4,12 @@ import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.io.i2c.I2CProviderBase;
 
+/**
+ * Implementation of a mocked I2C provider for testing an SCD41 sensor
+ */
 public class MockI2CProviderImpl extends I2CProviderBase implements MockI2CProvider {
 
+    /** {@inheritDoc} */
     public MockI2CProviderImpl() {
         this.id = ID;
         this.name = NAME;

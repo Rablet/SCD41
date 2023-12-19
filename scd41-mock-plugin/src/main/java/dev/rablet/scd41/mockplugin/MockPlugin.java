@@ -7,12 +7,21 @@ import com.pi4j.provider.Provider;
 import dev.rablet.scd41.mockplugin.platform.MockPlatform;
 import dev.rablet.scd41.mockplugin.provider.i2c.MockI2CProvider;
 
+/**
+ * Mock plugin for testing SCD41 sensor
+ */
 public class MockPlugin implements Plugin {
 
+    /**
+     * The providers supported by this plugin. Only I2C
+     */
     private Provider providers[] = {
             MockI2CProvider.newInstance(),
     };
 
+    /**
+     * Registers the providers
+     */
     @Override
     public void initialize(PluginService service) {
         service.register(new MockPlatform())

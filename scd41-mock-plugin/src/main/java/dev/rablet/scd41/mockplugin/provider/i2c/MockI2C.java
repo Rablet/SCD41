@@ -9,8 +9,16 @@ import dev.rablet.scd41.mockplugin.SCD41Commands;
 
 import java.util.Arrays;
 
+/**
+ * Mocks an I2C provider for the purpose of unit testing an SCD41 sensor reader.
+ * Attempts to simulate the real business rules of an SCD41 sensor:
+ * - Sensor Reads only allowed when periodic reads are on
+ * - Have to check if data is ready before reading sensor
+ * - Returns the exact sensor data used as an example in the spec sheet
+ */
 public class MockI2C extends I2CBase implements I2C {
 
+    /** {@inheritDoc} */
     public MockI2C(I2CProvider provider, I2CConfig config) {
         super(provider, config);
     }
@@ -44,6 +52,12 @@ public class MockI2C extends I2CBase implements I2C {
         return 1;
     }
 
+    /**
+     * Converts a string representation of a hexadecimal value to a byte array
+     * 
+     * @param s String representation of a hexadecimal value to be converted
+     * @return byte array for the same value
+     */
     private static byte[] hexStringToByteArray(String s) {
         int len = s.length();
         byte[] data = new byte[len / 2];
@@ -82,6 +96,13 @@ public class MockI2C extends I2CBase implements I2C {
         return 1;
     }
 
+    /**
+     * Builds a byte array representation of a command to be sent based on a hex
+     * value
+     * 
+     * @param int the command to be converted to a byte array
+     * @return the byte array representation of the command
+     */
     private byte[] buildCommmandArray(int command) {
         byte[] cmd = new byte[2];
         cmd[0] = (byte) ((command >> 8) & 0xFF);
